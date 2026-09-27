@@ -1,0 +1,9 @@
+{
+  "name": "shopflow-mvc-local",
+  "version": "3.0.0",
+  "private": true,
+  "description": "E-commerce mobile local-first em MVC com localStorage e gravador de áudio local.",
+  "scripts": {
+    "check": "node --check js/app.js && node --check js/controllers/AppController.js && node --check js/services/CheckoutService.js"
+  }
+}

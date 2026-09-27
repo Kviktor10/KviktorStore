@@ -1,0 +1,11 @@
+import {BRL,escapeHtml} from '../utils/helpers.js';
+export class CartView{
+  constructor(cartService,handlers){this.cart=cartService;this.handlers=handlers;}
+  render(){
+    const lines=this.cart.lines(); const subtotal=this.cart.subtotal();
+    if(!lines.length) return `<section><h1 class="page-title">Carrinho</h1><p class="page-subtitle">Seu carrinho está vazio.</p><div class="panel section"><p>Adicione produtos para continuar.</p><button class="primary-btn" data-action="continue">Voltar às compras</button></div></section>`;
+    return `<section><h1 class="page-title">Carrinho</h1><p class="page-subtitle">${this.cart.count()} item(ns)</p><div class="section cart-list">${lines.map(l=>this.item(l)).join('')}</div><div class="panel section"><div class="summary"><div class="summary-row"><span>Subtotal</span><strong>${BRL(subtotal)}</strong></div><div class="summary-row"><span>Frete</span><span>A calcular no checkout</span></div><div class="summary-row total"><span>Total parcial</span><strong>${BRL(subtotal)}</strong></div></div><div class="order-actions"><button class="secondary-btn" data-action="continue">Continuar comprando</button><button class="primary-btn" data-action="checkout">Ir para checkout</button></div></div></section>`;
+  }
+  item(l){return `<article class="cart-item"><div class="cart-thumb">${l.product.icon}</div><div><div class="product-name">${escapeHtml(l.product.name)}</div><div class="small muted">${BRL(l.product.price)} cada</div><div class="qty section"><button data-dec="${l.product.id}">−</button><strong>${l.quantity}</strong><button data-inc="${l.product.id}">+</button><button class="text-btn" data-remove="${l.product.id}">Excluir</button></div></div><strong>${BRL(l.product.price*l.quantity)}</strong></article>`;}
+  bind(root){root.querySelector('[data-action="continue"]')?.addEventListener('click',()=>this.handlers.onContinue());root.querySelector('[data-action="checkout"]')?.addEventListener('click',()=>this.handlers.onCheckout());root.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click',()=>this.handlers.onQty(b.dataset.dec,-1)));root.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click',()=>this.handlers.onQty(b.dataset.inc,1)));root.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>this.handlers.onRemove(b.dataset.remove)));}
+}
